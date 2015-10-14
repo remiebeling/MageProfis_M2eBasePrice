@@ -34,9 +34,26 @@ extends Mage_Core_Model_Abstract
      */
     public function setEbayBasePriceAmount($_product)
     {
-        if($_product->getBasePriceAmount() != "")
+        if($_product->getBasePriceAmount() != "" && $_product->getBasePriceUnit() != "")
         {
             $basepriceamount = (string)$_product->getBasePriceAmount();
+            
+            $unit = strtolower($_product->getBasePriceUnit());
+
+            switch ( $unit ){
+                case 'g':
+                    $basepriceamount = round(intval($basepriceamount) / 100, 2);
+                    break;
+                    
+                case 'ml':
+                    $basepriceamount = round(intval($basepriceamount) / 100, 2);
+                    break;
+            }
+
+            $_product->setData('m2e_ebay_base_price_unit', $unit);
+            
+            
+            
             $_product->setData('m2e_ebay_base_price_amount', str_replace('.', ',', $basepriceamount));
         }
         //Zend_Debug::dump($_product->getData()); die;
@@ -47,7 +64,23 @@ extends Mage_Core_Model_Abstract
     {
         if($_product->getBasePriceUnit() != "")
         {
-            $_product->setData('m2e_ebay_base_price_unit', strtolower($_product->getBasePriceUnit()));
+            $unit = strtolower($_product->getBasePriceUnit());
+            
+            switch ( $unit ){
+                case 'g':
+                    $unit = '100 g';
+                    break;
+                    
+                case 'ml':
+                    $unit = '100 ml';
+                    break;
+                    
+                case 'l':
+                    $unit = 'L';
+                    break;
+            }
+            
+            $_product->setData('m2e_ebay_base_price_unit', $unit);
         }
     }
     
